@@ -1,3 +1,4 @@
+// Penanda tampilan saja. Verifikasi sebenarnya dilakukan server.
 const hariWIB = () =>
   new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' })
 
