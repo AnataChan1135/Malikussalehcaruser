@@ -1,4 +1,3 @@
-/* src/index.css */
 @import "tailwindcss";
 
 @theme {
@@ -9,4 +8,149 @@
   --color-danger: #dc2626;
   --color-muted: #9ca3af;
   --font-sans: "Inter", system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    @apply bg-slate-100 text-slate-800 antialiased;
+  }
+  body {
+    @apply min-h-dvh font-sans;
+  }
+  button {
+    @apply cursor-pointer;
+  }
+}
+
+@layer components {
+  .halaman {
+    @apply mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 bg-white px-4;
+    padding-top: max(1rem, env(safe-area-inset-top));
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
+  .halaman-tengah {
+    @apply mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-4 bg-white px-4;
+    padding-top: max(1rem, env(safe-area-inset-top));
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
+  .layar-tengah {
+    @apply grid min-h-dvh place-items-center px-6 text-center;
+  }
+  .header {
+    @apply flex items-center justify-between py-2;
+  }
+  .baris {
+    @apply flex items-center gap-2;
+  }
+  .judul {
+    @apply text-lg font-semibold text-slate-900;
+  }
+  .judul-besar {
+    @apply text-2xl font-bold text-slate-900;
+  }
+  .nama-plat {
+    @apply font-semibold text-slate-900;
+  }
+  .teks-kecil {
+    @apply text-sm text-slate-500;
+  }
+  .ikon-btn {
+    @apply grid h-11 w-11 place-items-center rounded-full bg-brand-soft text-brand transition active:scale-95;
+  }
+  .kartu {
+    @apply rounded-2xl border border-slate-200 bg-white p-4 shadow-sm;
+  }
+  .kartu-nonaktif {
+    @apply rounded-2xl border border-slate-200 bg-slate-100 p-4 text-slate-400;
+  }
+  .tombol {
+    @apply flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand px-4 font-semibold text-white transition active:scale-[0.98] disabled:bg-slate-300 disabled:text-slate-500;
+  }
+  .tombol-sekunder {
+    @apply flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-brand px-4 font-semibold text-brand transition active:scale-[0.98] disabled:opacity-50;
+  }
+  .input {
+    @apply h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-base outline-none focus:border-brand focus:ring-2 focus:ring-brand-soft;
+  }
+  .label {
+    @apply mb-1 block text-sm font-medium text-slate-700;
+  }
+  .pesan-error {
+    @apply rounded-xl bg-red-50 p-3 text-sm text-danger;
+  }
+  .pesan-peringatan {
+    @apply rounded-xl bg-amber-50 p-3 text-sm text-warning;
+  }
+  .pesan-sukses {
+    @apply rounded-xl bg-green-50 p-3 text-sm text-success;
+  }
+  .lencana {
+    @apply rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+  .lencana-info {
+    @apply bg-brand-soft text-brand;
+  }
+  .overlay {
+    @apply fixed inset-0 z-50 grid place-items-center bg-black/50 p-6;
+  }
+  .panel-modal {
+    @apply w-full max-w-sm rounded-2xl bg-white p-6 text-center;
+  }
+  .kotak-barcode {
+    @apply mx-auto my-4 grid place-items-center rounded-xl bg-white p-3;
+  }
+  .daftar-langkah {
+    @apply flex flex-col gap-3;
+  }
+  .kamera-kotak {
+    @apply mx-auto w-full overflow-hidden rounded-2xl bg-slate-900;
+  }
+}
+
+/* Progres kuota (elemen native <progress>) */
+.progres {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 0.75rem;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+.progres::-webkit-progress-bar {
+  background: var(--color-slate-200);
+  border-radius: 9999px;
+}
+.progres::-webkit-progress-value {
+  background: var(--color-brand);
+  border-radius: 9999px;
+}
+.progres::-moz-progress-bar {
+  background: var(--color-brand);
+}
+.progres-waspada::-webkit-progress-value {
+  background: var(--color-warning);
+}
+.progres-waspada::-moz-progress-bar {
+  background: var(--color-warning);
+}
+.progres-kritis::-webkit-progress-value {
+  background: var(--color-danger);
+}
+.progres-kritis::-moz-progress-bar {
+  background: var(--color-danger);
+}
+
+/* Cetak barcode: hanya area barcode yang tampil */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .area-cetak,
+  .area-cetak * {
+    visibility: visible;
+  }
+  .area-cetak {
+    position: absolute;
+    inset: 0;
+  }
 }
