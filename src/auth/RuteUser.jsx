@@ -3,7 +3,7 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from './useAuth.js'
 
 export default function RuteUser() {
-  const { session, profil, siap, signOut } = useAuth()
+  const { session, profil, profilError, siap, signOut, ulangiProfil } = useAuth()
   const [lokasiOk, setLokasiOk] = useState(false)
   const bukaGerbang = useCallback(() => setLokasiOk(true), [])
 
@@ -13,21 +13,34 @@ export default function RuteUser() {
 
   if (!profil) {
     return (
-      <PesanBlokir
-        teks="Profil akun belum terdaftar di sistem. Hubungi admin."
-        onKeluar={signOut}
-    />
-  )
-}
+      <div className="layar-tengah">
+        <div className="daftar-langkah">
+          <p className="pesan-error">
+            Profil tidak bisa dibaca.
+            {profilError ? ` Detail: ${profilError}` : ' Data profil tidak ditemukan.'}
+          </p>
+          <p className="teks-kecil">
+            User ID: {session.user.id}
+          </p>
+          <button className="tombol" onClick={ulangiProfil}>
+            Coba Lagi
+          </button>
+          <button className="tombol-sekunder" onClick={signOut}>
+            Keluar
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   if (!profil.is_active) {
     return (
       <PesanBlokir
         teks="Akun ini sedang dinonaktifkan. Hubungi admin."
         onKeluar={signOut}
-    />
-  )
-}
+      />
+    )
+  }
 
   if (profil.role !== 'supir') {
     return (

@@ -5,7 +5,12 @@ import { AuthContext } from './AuthContext.js'
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null)
   const [siap, setSiap] = useState(false)
-  const [profilMentah, setProfilMentah] = useState({ userId: null, data: null })
+  const [profilMentah, setProfilMentah] = useState({
+    userId: null,
+    data: null,
+    error: null,
+  })
+  const [muatUlang, setMuatUlang] = useState(0)
 
   // Sesi awal dan perubahan login/logout
   useEffect(() => {
@@ -29,7 +34,7 @@ export function AuthProvider({ children }) {
 
   const userId = session?.user?.id ?? null
 
-  // Ambil profil hanya saat user berubah
+  // Ambil profil saat user berubah atau saat diminta muat ulang
   useEffect(() => {
     if (!userId) return
     let aktif = true
@@ -39,23 +44,33 @@ export function AuthProvider({ children }) {
       .select('id, nama, role, is_active')
       .eq('id', userId)
       .maybeSingle()
-      .then(({ data }) => {
-        if (aktif) setProfilMentah({ userId, data: data ?? null })
+      .then(({ data, error }) => {
+        if (!aktif) return
+        setProfilMentah({
+          userId,
+          data: data ?? null,
+          error: error ? `${error.code ?? ''} ${error.message}`.trim() : null,
+        })
       })
 
     return () => {
       aktif = false
     }
-  }, [userId])
+  }, [userId, muatUlang])
 
-  // undefined = belum dimuat, null = tidak ditemukan
-  const profil =
-    userId && profilMentah.userId === userId ? profilMentah.data : undefined
+  const cocok = userId && profilMentah.userId === userId
+
+  // undefined = belum dimuat, null = tidak ditemukan / error
+  const profil = cocok ? profilMentah.data : undefined
+  const profilError = cocok ? profilMentah.error : null
 
   const signOut = () => supabase.auth.signOut()
+  const ulangiProfil = () => setMuatUlang((n) => n + 1)
 
   return (
-    <AuthContext.Provider value={{ session, profil, siap, signOut }}>
+    <AuthContext.Provider
+      value={{ session, profil, profilError, siap, signOut, ulangiProfil }}
+    >
       {children}
     </AuthContext.Provider>
   )
