@@ -11,14 +11,23 @@ export default function RuteUser() {
   if (!session) return <Navigate to="/login" replace />
   if (profil === undefined) return <Memuat />
 
-  if (!profil || !profil.is_active) {
+  if (!profil) {
     return (
       <PesanBlokir
-        teks="Akun ini tidak aktif atau tidak terdaftar."
+        teks="Profil akun belum terdaftar di sistem. Hubungi admin."
         onKeluar={signOut}
-      />
-    )
-  }
+    />
+  )
+}
+
+  if (!profil.is_active) {
+    return (
+      <PesanBlokir
+        teks="Akun ini sedang dinonaktifkan. Hubungi admin."
+        onKeluar={signOut}
+    />
+  )
+}
 
   if (profil.role !== 'supir') {
     return (
