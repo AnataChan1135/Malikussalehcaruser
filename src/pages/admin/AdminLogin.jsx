@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase.js'
 import { useAuth } from '../../auth/useAuth.js'
@@ -10,52 +10,8 @@ export default function AdminLogin() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [kode, setKode] = useState('')
-  const [tantangan, setTantangan] = useState(null) // { factorId, challengeId }
-  const [menyiapkanTantangan, setMenyiapkanTantangan] = useState(false)
   const [memuat, setMemuat] = useState(false)
   const [pesan, setPesan] = useState(null)
-
-  const perluTantangan =
-    Boolean(session) && aal && aal.currentLevel !== 'aal2' && aal.nextLevel === 'aal2'
-
-  // Begitu diketahui sesi butuh verifikasi TOTP, siapkan tantangannya otomatis
-  // tanpa meminta user memasukkan email/password lagi.
-  useEffect(() => {
-    if (!perluTantangan || tantangan || menyiapkanTantangan) return
-    let aktif = true
-    setMenyiapkanTantangan(true)
-    setPesan(null)
-
-    supabase.auth.mfa.listFactors().then(async ({ data, error }) => {
-      if (!aktif) return
-      const totp = data?.totp?.find((f) => f.status === 'verified')
-
-      if (error || !totp) {
-        setMenyiapkanTantangan(false)
-        setPesan('Verifikasi dua langkah tidak bisa dimulai. Keluar lalu masuk ulang.')
-        return
-      }
-
-      const { data: c, error: errC } = await supabase.auth.mfa.challenge({
-        factorId: totp.id,
-      })
-      if (!aktif) return
-      setMenyiapkanTantangan(false)
-
-      if (errC) {
-        setPesan('Verifikasi dua langkah gagal dimulai. Coba lagi.')
-        return
-      }
-
-      setTantangan({ factorId: totp.id, challengeId: c.id })
-    })
-
-    return () => {
-      aktif = false
-    }
-  }, [perluTantangan, tantangan, menyiapkanTantangan])
-
-  // --- Dari sini ke bawah tidak ada hook lagi ---
 
   if (!siap) return <div className="layar-tengah teks-kecil">Memuat...</div>
 
@@ -79,15 +35,35 @@ export default function AdminLogin() {
     if (error) setPesan('Email atau password salah.')
   }
 
+  // Tantangan (challenge) dibuat di sini, tepat saat tombol ditekan, bukan
+  // disiapkan lebih dulu lewat useEffect. Ini membuat kode TOTP selalu
+  // dicocokkan dengan tantangan yang baru, dan menghindari race condition.
   async function verifikasi(e) {
     e.preventDefault()
-    if (!tantangan) return
     setMemuat(true)
     setPesan(null)
 
+    const { data: factors, error: errFactors } = await supabase.auth.mfa.listFactors()
+    const totp = factors?.totp?.find((f) => f.status === 'verified')
+
+    if (errFactors || !totp) {
+      setMemuat(false)
+      setPesan('Verifikasi dua langkah tidak bisa dimulai. Keluar lalu masuk ulang.')
+      return
+    }
+
+    const { data: tantangan, error: errTantangan } = await supabase.auth.mfa.challenge({
+      factorId: totp.id,
+    })
+    if (errTantangan) {
+      setMemuat(false)
+      setPesan('Verifikasi dua langkah gagal dimulai. Coba lagi.')
+      return
+    }
+
     const { error } = await supabase.auth.mfa.verify({
-      factorId: tantangan.factorId,
-      challengeId: tantangan.challengeId,
+      factorId: totp.id,
+      challengeId: tantangan.id,
       code: kode.trim(),
     })
     setMemuat(false)
@@ -103,7 +79,7 @@ export default function AdminLogin() {
   }
 
   if (session) {
-    // Pada titik ini sudah pasti perluTantangan true
+    // Pada titik ini sudah pasti: sesi ada, faktor TOTP ada, tapi belum aal2
     return (
       <div className="halaman-tengah">
         <div className="daftar-langkah">
@@ -126,11 +102,7 @@ export default function AdminLogin() {
               required
             />
             {pesan && <p className="pesan-error">{pesan}</p>}
-            <button
-              type="submit"
-              className="tombol"
-              disabled={memuat || !tantangan || kode.length < 6}
-            >
+            <button type="submit" className="tombol" disabled={memuat || kode.length < 6}>
               {memuat ? 'Memverifikasi...' : 'Verifikasi'}
             </button>
           </form>
