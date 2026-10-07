@@ -72,6 +72,9 @@
   .input {
     @apply h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-base outline-none focus:border-brand focus:ring-2 focus:ring-brand-soft;
   }
+  .textarea {
+    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base outline-none focus:border-brand focus:ring-2 focus:ring-brand-soft;
+  }
   .label {
     @apply mb-1 block text-sm font-medium text-slate-700;
   }
@@ -83,6 +86,9 @@
   }
   .pesan-sukses {
     @apply rounded-xl bg-green-50 p-3 text-sm text-success;
+  }
+  .pesan-info {
+    @apply rounded-xl bg-brand-soft p-3 text-sm text-brand;
   }
   .lencana {
     @apply rounded-full px-2.5 py-0.5 text-xs font-medium;
@@ -104,6 +110,15 @@
   }
   .kamera-kotak {
     @apply mx-auto w-full overflow-hidden rounded-2xl bg-slate-900;
+  }
+  .kamera-wadah {
+    @apply relative w-full overflow-hidden rounded-2xl bg-slate-900;
+  }
+  .kamera-video {
+    @apply block aspect-[3/4] w-full object-cover;
+  }
+  .kamera-sembunyi {
+    @apply hidden;
   }
 }
 

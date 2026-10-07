@@ -3,6 +3,7 @@ import Login from './pages/Login.jsx'
 import RuteUser from './auth/RuteUser.jsx'
 import Beranda from './pages/user/Beranda.jsx'
 import Scan from './pages/user/Scan.jsx'
+import MeteranAwal from './pages/user/MeteranAwal.jsx'
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
       <Route element={<RuteUser />}>
         <Route path="/" element={<Beranda />} />
         <Route path="/scan" element={<Scan />} />
+        <Route path="/meteran-awal" element={<MeteranAwal />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

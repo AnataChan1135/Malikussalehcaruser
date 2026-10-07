@@ -33,7 +33,7 @@ export default function Scan() {
 
           try {
             const lok = await ambilLokasi()
-            const { data: cocok, error } = await supabase.rpc('scan_barcode', {
+            const { data: grantId, error } = await supabase.rpc('scan_barcode', {
               p_token: teks,
               p_lat: lok.lat,
               p_lng: lok.lng,
@@ -41,18 +41,14 @@ export default function Scan() {
             })
             if (error) throw error
 
-            if (cocok) {
-              tandaScanHariIni(profil.id)
+            if (grantId) {
+              tandaScanHariIni(profil.id, grantId)
               nav('/', { replace: true })
             } else {
               setPesan('Barcode ini bukan milik akun Anda.')
             }
           } catch (err) {
-            setPesan(
-              err.message?.startsWith('GPS')
-                ? 'Lokasi wajib aktif untuk scan. Izinkan lokasi lalu coba lagi.'
-                : pesanError(err),
-            )
+            setPesan(pesanError(err))
           } finally {
             setMemproses(false)
           }

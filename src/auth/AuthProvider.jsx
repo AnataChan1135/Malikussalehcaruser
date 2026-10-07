@@ -2,15 +2,18 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase.js'
 import { AuthContext } from './AuthContext.js'
 
+const KOLOM_PROFIL = 'id, nama, role, is_active'
+
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null)
   const [siap, setSiap] = useState(false)
-  const [profilMentah, setProfilMentah] = useState({
+  // Profil disimpan bersama userId, sehingga data user lama tidak pernah dipakai untuk user baru
+  const [profilState, setProfilState] = useState({
     userId: null,
+    status: 'memuat',
     data: null,
-    error: null,
   })
-  const [muatUlang, setMuatUlang] = useState(0)
+  const [versi, setVersi] = useState(0)
 
   // Sesi awal dan perubahan login/logout
   useEffect(() => {
@@ -18,12 +21,12 @@ export function AuthProvider({ children }) {
 
     supabase.auth.getSession().then(({ data }) => {
       if (!aktif) return
-      setSession(data.session)
+      setSession(data.session ?? null)
       setSiap(true)
     })
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
-      setSession(s)
+      if (aktif) setSession(s ?? null)
     })
 
     return () => {
@@ -34,42 +37,58 @@ export function AuthProvider({ children }) {
 
   const userId = session?.user?.id ?? null
 
-  // Ambil profil saat user berubah atau saat diminta muat ulang
+  // Ambil profil setiap user berubah atau saat diminta ulang
   useEffect(() => {
     if (!userId) return
     let aktif = true
 
     supabase
       .from('profiles')
-      .select('id, nama, role, is_active')
+      .select(KOLOM_PROFIL)
       .eq('id', userId)
       .maybeSingle()
       .then(({ data, error }) => {
         if (!aktif) return
-        setProfilMentah({
+
+        if (error) {
+          // Detail error hanya untuk developer, tidak ditampilkan ke user
+          if (import.meta.env.DEV) console.error('[profil]', error)
+          setProfilState({ userId, status: 'gagal', data: null })
+          return
+        }
+
+        setProfilState({
           userId,
+          status: data ? 'ada' : 'kosong',
           data: data ?? null,
-          error: error ? `${error.code ?? ''} ${error.message}`.trim() : null,
         })
       })
 
     return () => {
       aktif = false
     }
-  }, [userId, muatUlang])
+  }, [userId, versi])
 
-  const cocok = userId && profilMentah.userId === userId
+  // Status yang berlaku hanya jika profil itu milik user yang sedang login
+  let statusProfil = 'memuat'
+  let profil = null
 
-  // undefined = belum dimuat, null = tidak ditemukan / error
-  const profil = cocok ? profilMentah.data : undefined
-  const profilError = cocok ? profilMentah.error : null
+  if (!userId) {
+    statusProfil = 'tanpa-sesi'
+  } else if (profilState.userId === userId) {
+    statusProfil = profilState.status
+    profil = profilState.status === 'ada' ? profilState.data : null
+  }
 
   const signOut = () => supabase.auth.signOut()
-  const ulangiProfil = () => setMuatUlang((n) => n + 1)
+  const ulangiProfil = () => {
+    setProfilState((s) => ({ ...s, status: 'memuat' }))
+    setVersi((n) => n + 1)
+  }
 
   return (
     <AuthContext.Provider
-      value={{ session, profil, profilError, siap, signOut, ulangiProfil }}
+      value={{ session, profil, statusProfil, siap, signOut, ulangiProfil }}
     >
       {children}
     </AuthContext.Provider>

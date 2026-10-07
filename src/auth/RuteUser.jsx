@@ -3,40 +3,38 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from './useAuth.js'
 
 export default function RuteUser() {
-  const { session, profil, profilError, siap, signOut, ulangiProfil } = useAuth()
+  const { session, profil, statusProfil, siap, signOut, ulangiProfil } = useAuth()
   const [lokasiOk, setLokasiOk] = useState(false)
   const bukaGerbang = useCallback(() => setLokasiOk(true), [])
 
   if (!siap) return <Memuat />
   if (!session) return <Navigate to="/login" replace />
-  if (profil === undefined) return <Memuat />
+  if (statusProfil === 'memuat') return <Memuat />
 
-  if (!profil) {
+  if (statusProfil === 'gagal') {
     return (
-      <div className="layar-tengah">
-        <div className="daftar-langkah">
-          <p className="pesan-error">
-            Profil tidak bisa dibaca.
-            {profilError ? ` Detail: ${profilError}` : ' Data profil tidak ditemukan.'}
-          </p>
-          <p className="teks-kecil">
-            User ID: {session.user.id}
-          </p>
-          <button className="tombol" onClick={ulangiProfil}>
-            Coba Lagi
-          </button>
-          <button className="tombol-sekunder" onClick={signOut}>
-            Keluar
-          </button>
-        </div>
-      </div>
+      <PesanBlokir
+        teks="Data akun belum bisa dimuat. Periksa koneksi internet lalu coba lagi."
+        labelUtama="Coba Lagi"
+        onUtama={ulangiProfil}
+        onKeluar={signOut}
+      />
+    )
+  }
+
+  if (statusProfil !== 'ada' || !profil) {
+    return (
+      <PesanBlokir
+        teks="Akun Anda belum terdaftar. Hubungi admin."
+        onKeluar={signOut}
+      />
     )
   }
 
   if (!profil.is_active) {
     return (
       <PesanBlokir
-        teks="Akun ini sedang dinonaktifkan. Hubungi admin."
+        teks="Akun Anda sedang dinonaktifkan. Hubungi admin."
         onKeluar={signOut}
       />
     )
@@ -45,9 +43,8 @@ export default function RuteUser() {
   if (profil.role !== 'supir') {
     return (
       <PesanBlokir
-        teks="Akun ini adalah akun admin. Gunakan dashboard admin."
+        teks="Akun ini tidak memiliki akses ke halaman ini."
         onKeluar={signOut}
-        peringatan
       />
     )
   }
@@ -63,12 +60,17 @@ function Memuat() {
   return <div className="layar-tengah teks-kecil">Memuat...</div>
 }
 
-function PesanBlokir({ teks, onKeluar, peringatan = false }) {
+function PesanBlokir({ teks, labelUtama, onUtama, onKeluar }) {
   return (
     <div className="layar-tengah">
       <div className="daftar-langkah">
-        <p className={peringatan ? 'pesan-peringatan' : 'pesan-error'}>{teks}</p>
-        <button className="tombol" onClick={onKeluar}>
+        <p className="pesan-error">{teks}</p>
+        {labelUtama && (
+          <button className="tombol" onClick={onUtama}>
+            {labelUtama}
+          </button>
+        )}
+        <button className="tombol-sekunder" onClick={onKeluar}>
           Keluar
         </button>
       </div>
