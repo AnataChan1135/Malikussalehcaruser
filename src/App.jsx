@@ -5,6 +5,7 @@ import Beranda from './pages/user/Beranda.jsx'
 import Scan from './pages/user/Scan.jsx'
 import MeteranAwal from './pages/user/MeteranAwal.jsx'
 import IsiMinyak from './pages/user/IsiMinyak.jsx'
+import MeteranAkhir from './pages/user/MeteranAkhir.jsx'
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
         <Route path="/scan" element={<Scan />} />
         <Route path="/meteran-awal" element={<MeteranAwal />} />
         <Route path="/isi-minyak" element={<IsiMinyak />} />
+        <Route path="/meteran-akhir" element={<MeteranAkhir />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />
