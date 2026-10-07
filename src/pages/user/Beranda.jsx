@@ -4,6 +4,7 @@ import { Camera, QrCode } from 'lucide-react'
 import { supabase } from '../../lib/supabase.js'
 import { useAuth } from '../../auth/useAuth.js'
 import { sudahScanHariIni } from '../../lib/scanHariIni.js'
+import { formatTanggal } from '../../lib/waktu.js'
 import ModalBarcode from '../../components/user/ModalBarcode.jsx'
 
 // Ambang visual saja. Nilai resmi diatur Super Admin di tabel pengaturan.
@@ -15,6 +16,7 @@ export default function Beranda() {
   const [kuota, setKuota] = useState([])
   const [kendaraan, setKendaraan] = useState({})
   const [sesi, setSesi] = useState(undefined)
+  const [riwayat, setRiwayat] = useState(undefined)
   const [modalBarcode, setModalBarcode] = useState(false)
   const [memuat, setMemuat] = useState(true)
 
@@ -31,11 +33,18 @@ export default function Beranda() {
         .select('id, vehicle_id, started_at')
         .eq('status', 'aktif')
         .maybeSingle(),
-    ]).then(([{ data: k }, { data: v }, { data: s }]) => {
+      supabase
+        .from('sessions')
+        .select('id, started_at')
+        .eq('status', 'selesai')
+        .order('started_at', { ascending: false })
+        .limit(10),
+    ]).then(([{ data: k }, { data: v }, { data: s }, { data: r }]) => {
       if (!aktif) return
       setKuota(k ?? [])
       setKendaraan(Object.fromEntries((v ?? []).map((x) => [x.id, x])))
       setSesi(s ?? null)
+      setRiwayat(r ?? [])
       setMemuat(false)
     })
 
@@ -140,6 +149,25 @@ export default function Beranda() {
             </Link>
           </>
         )}
+      </section>
+
+      <section className="daftar-langkah">
+        <h2 className="judul">Riwayat Perjalanan</h2>
+
+        {riwayat === undefined && <p className="teks-kecil">Memuat...</p>}
+
+        {riwayat && riwayat.length === 0 && (
+          <p className="teks-kecil">Belum ada perjalanan yang selesai.</p>
+        )}
+
+        {riwayat?.map((s) => (
+          <div className="kartu-nonaktif daftar-langkah" key={s.id}>
+            <p className="judul">{formatTanggal(s.started_at)}</p>
+            <Link className="tombol-sekunder" to={`/review/${s.id}`}>
+              Review Laporan
+            </Link>
+          </div>
+        ))}
       </section>
 
       <button className="tombol-sekunder" onClick={signOut}>

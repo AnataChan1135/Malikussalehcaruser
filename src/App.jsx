@@ -6,6 +6,7 @@ import Scan from './pages/user/Scan.jsx'
 import MeteranAwal from './pages/user/MeteranAwal.jsx'
 import IsiMinyak from './pages/user/IsiMinyak.jsx'
 import MeteranAkhir from './pages/user/MeteranAkhir.jsx'
+import Review from './pages/user/Review.jsx'
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/meteran-awal" element={<MeteranAwal />} />
         <Route path="/isi-minyak" element={<IsiMinyak />} />
         <Route path="/meteran-akhir" element={<MeteranAkhir />} />
+        <Route path="/review/:sesiId" element={<Review />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />
