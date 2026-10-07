@@ -58,7 +58,8 @@ export default function Review() {
         .select('id, kind, isi, status, catatan_admin, jenis_alasan, created_at')
         .eq('session_id', sesiId)
         .order('created_at'),
-    ]).then(([s, o, r, v]) => {
+      supabase.rpc('sesi_bisa_review', { p_sesi: sesiId }),
+    ]).then(([s, o, r, v, b]) => {
       if (!aktif) return
       if (s.error || !s.data || s.data.status !== 'selesai') {
         setData(null)
@@ -69,6 +70,7 @@ export default function Review() {
         odometer: o.data ?? [],
         isi: r.data ?? [],
         laporan: v.data ?? [],
+        bisaReview: b.data === true,
       })
     })
 
@@ -142,18 +144,12 @@ export default function Review() {
 
       <section className="kartu daftar-langkah">
         <h2 className="judul">Ringkasan</h2>
-        <p className="teks-kecil">
-          Kilometer awal: {awal ? awal.km : '-'}
-        </p>
-        <p className="teks-kecil">
-          Kilometer akhir: {akhir ? akhir.km : '-'}
-        </p>
+        <p className="teks-kecil">Kilometer awal: {awal ? awal.km : '-'}</p>
+        <p className="teks-kecil">Kilometer akhir: {akhir ? akhir.km : '-'}</p>
         <p className="teks-kecil">
           Jarak tempuh: {selisihKm !== null ? `${selisihKm} km` : '-'}
         </p>
-        <p className="teks-kecil">
-          Total BBM diisi: {totalLiter.toFixed(2)} liter
-        </p>
+        <p className="teks-kecil">Total BBM diisi: {totalLiter.toFixed(2)} liter</p>
       </section>
 
       {data.isi.length > 0 && (
@@ -193,12 +189,14 @@ export default function Review() {
         </section>
       )}
 
-      {!sudahReview ? (
+      {sudahReview ? (
+        <p className="pesan-sukses">Review sudah dikirim.</p>
+      ) : data.bisaReview ? (
         <form className="kartu daftar-langkah" onSubmit={kirimReview}>
           <h2 className="judul">Tulis Review</h2>
           <p className="teks-kecil">
-            Review hanya bisa dikirim sekali untuk perjalanan ini. Setelah dikirim,
-            tidak bisa diubah.
+            Review hanya bisa dikirim sekali dan hanya pada minggu perjalanan
+            berlangsung. Setelah dikirim, tidak bisa diubah.
           </p>
           <textarea
             className="textarea"
@@ -213,7 +211,10 @@ export default function Review() {
           </button>
         </form>
       ) : (
-        <p className="pesan-sukses">Review sudah dikirim.</p>
+        <p className="pesan-peringatan">
+          Review tidak tersedia. Review hanya bisa dikirim pada minggu perjalanan
+          berlangsung. Admin dapat membuka riwayat ini bila diperlukan.
+        </p>
       )}
     </div>
   )

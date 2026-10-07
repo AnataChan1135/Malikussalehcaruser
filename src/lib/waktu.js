@@ -11,10 +11,24 @@ export function formatTanggal(iso) {
   })
 }
 
+export function formatTanggalPendek(iso) {
+  return new Date(iso).toLocaleDateString('id-ID', {
+    timeZone: ZONA,
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
+}
+
 export function formatJam(iso) {
   return new Date(iso).toLocaleTimeString('id-ID', {
     timeZone: ZONA,
     hour: '2-digit',
     minute: '2-digit',
   })
+}
+
+// Kunci pengelompokan per hari, format YYYY-MM-DD (WIB)
+export function hariWIB(iso) {
+  return new Date(iso).toLocaleDateString('en-CA', { timeZone: ZONA })
 }

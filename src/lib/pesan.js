@@ -9,6 +9,7 @@ const PESAN = {
   FOTO_GAGAL: 'Foto gagal diunggah. Silakan coba lagi.',
   KAMERA_BELUM_SIAP: 'Kamera belum siap. Tunggu sebentar lalu coba lagi.',
   DATA_TIDAK_VALID: 'Data tidak valid. Silakan muat ulang halaman.',
+  REVIEW_TIDAK_TERSEDIA: 'Review untuk perjalanan ini sudah ditutup.',
 }
 
 // Keterangan singkat untuk setiap tanda pemeriksaan

@@ -42,6 +42,9 @@
   .baris {
     @apply flex items-center gap-2;
   }
+  .pilihan-minggu {
+    @apply flex flex-wrap gap-2;
+  }
   .judul {
     @apply text-lg font-semibold text-slate-900;
   }
@@ -69,6 +72,12 @@
   .tombol-sekunder {
     @apply flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-brand px-4 font-semibold text-brand transition active:scale-[0.98] disabled:opacity-50;
   }
+  .chip {
+    @apply rounded-full border border-brand px-3 py-1 text-sm font-medium text-brand;
+  }
+  .chip-aktif {
+    @apply bg-brand text-white;
+  }
   .input {
     @apply h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-base outline-none focus:border-brand focus:ring-2 focus:ring-brand-soft;
   }
@@ -95,6 +104,9 @@
   }
   .lencana-info {
     @apply bg-brand-soft text-brand;
+  }
+  .lencana-tunggu {
+    @apply bg-amber-50 text-warning;
   }
   .overlay {
     @apply fixed inset-0 z-50 grid place-items-center bg-black/50 p-6;
@@ -164,8 +176,20 @@
   .area-cetak * {
     visibility: visible;
   }
+  .overlay {
+    position: static;
+    background: none;
+    padding: 0;
+    display: block;
+  }
   .area-cetak {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-shadow: none;
+  }
+  .tidak-cetak {
+    display: none !important;
   }
 }
