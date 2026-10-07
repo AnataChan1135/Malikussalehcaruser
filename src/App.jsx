@@ -7,6 +7,9 @@ import MeteranAwal from './pages/user/MeteranAwal.jsx'
 import IsiMinyak from './pages/user/IsiMinyak.jsx'
 import MeteranAkhir from './pages/user/MeteranAkhir.jsx'
 import Review from './pages/user/Review.jsx'
+import AdminLogin from './pages/admin/AdminLogin.jsx'
+import RuteAdmin from './auth/RuteAdmin.jsx'
+import Ringkasan from './pages/admin/Ringkasan.jsx'
 
 export default function App() {
   return (
@@ -20,6 +23,12 @@ export default function App() {
         <Route path="/isi-minyak" element={<IsiMinyak />} />
         <Route path="/meteran-akhir" element={<MeteranAkhir />} />
         <Route path="/review/:sesiId" element={<Review />} />
+      </Route>
+
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin" element={<RuteAdmin />}>
+        <Route index element={<Ringkasan />} />
+        {/* Halaman admin lain ditambahkan pada tahap berikutnya */}
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

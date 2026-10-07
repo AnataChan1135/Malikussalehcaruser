@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase.js'
 import { AuthContext } from './AuthContext.js'
 
@@ -7,13 +7,15 @@ const KOLOM_PROFIL = 'id, nama, role, is_active'
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null)
   const [siap, setSiap] = useState(false)
-  // Profil disimpan bersama userId, sehingga data user lama tidak pernah dipakai untuk user baru
   const [profilState, setProfilState] = useState({
     userId: null,
     status: 'memuat',
     data: null,
   })
-  const [versi, setVersi] = useState(0)
+  const [profilVersi, setProfilVersi] = useState(0)
+
+  // undefined = belum dimuat, null = gagal dimuat, object = hasil
+  const [aal, setAal] = useState(undefined)
 
   // Sesi awal dan perubahan login/logout
   useEffect(() => {
@@ -51,7 +53,6 @@ export function AuthProvider({ children }) {
         if (!aktif) return
 
         if (error) {
-          // Detail error hanya untuk developer, tidak ditampilkan ke user
           if (import.meta.env.DEV) console.error('[profil]', error)
           setProfilState({ userId, status: 'gagal', data: null })
           return
@@ -67,9 +68,22 @@ export function AuthProvider({ children }) {
     return () => {
       aktif = false
     }
-  }, [userId, versi])
+  }, [userId, profilVersi])
 
-  // Status yang berlaku hanya jika profil itu milik user yang sedang login
+  // Status verifikasi dua langkah (TOTP). Dibutuhkan khusus oleh halaman admin.
+  const segarkanAal = useCallback(async () => {
+    const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+    setAal(error ? null : data)
+  }, [])
+
+  useEffect(() => {
+    if (!userId) {
+      setAal(undefined)
+      return
+    }
+    segarkanAal()
+  }, [userId, segarkanAal])
+
   let statusProfil = 'memuat'
   let profil = null
 
@@ -83,12 +97,21 @@ export function AuthProvider({ children }) {
   const signOut = () => supabase.auth.signOut()
   const ulangiProfil = () => {
     setProfilState((s) => ({ ...s, status: 'memuat' }))
-    setVersi((n) => n + 1)
+    setProfilVersi((n) => n + 1)
   }
 
   return (
     <AuthContext.Provider
-      value={{ session, profil, statusProfil, siap, signOut, ulangiProfil }}
+      value={{
+        session,
+        profil,
+        statusProfil,
+        siap,
+        aal,
+        segarkanAal,
+        signOut,
+        ulangiProfil,
+      }}
     >
       {children}
     </AuthContext.Provider>
