@@ -4,7 +4,7 @@ import RuteUser from './auth/RuteUser.jsx'
 import Beranda from './pages/user/Beranda.jsx'
 import Scan from './pages/user/Scan.jsx'
 import MeteranAwal from './pages/user/MeteranAwal.jsx'
-import IsiMinyak from './pages/user/IsiMinyak.jsx'
+import IsiMinyakUser from './pages/user/IsiMinyak.jsx'
 import MeteranAkhir from './pages/user/MeteranAkhir.jsx'
 import Review from './pages/user/Review.jsx'
 import AdminLogin from './pages/admin/AdminLogin.jsx'
@@ -12,6 +12,8 @@ import RuteAdmin from './auth/RuteAdmin.jsx'
 import Ringkasan from './pages/admin/Ringkasan.jsx'
 import Mobil from './pages/admin/Mobil.jsx'
 import Pengguna from './pages/admin/Pengguna.jsx'
+import SesiMeteran from './pages/admin/SesiMeteran.jsx'
+import IsiMinyakAdmin from './pages/admin/IsiMinyak.jsx'
 
 export default function App() {
   return (
@@ -22,7 +24,7 @@ export default function App() {
         <Route path="/" element={<Beranda />} />
         <Route path="/scan" element={<Scan />} />
         <Route path="/meteran-awal" element={<MeteranAwal />} />
-        <Route path="/isi-minyak" element={<IsiMinyak />} />
+        <Route path="/isi-minyak" element={<IsiMinyakUser />} />
         <Route path="/meteran-akhir" element={<MeteranAkhir />} />
         <Route path="/review/:sesiId" element={<Review />} />
       </Route>
@@ -32,8 +34,10 @@ export default function App() {
         <Route index element={<Ringkasan />} />
         <Route path="mobil" element={<Mobil />} />
         <Route path="pengguna" element={<Pengguna />} />
+        <Route path="sesi" element={<SesiMeteran />} />
+        <Route path="isi-minyak" element={<IsiMinyakAdmin />} />
         {/* Halaman admin lain ditambahkan pada tahap berikutnya:
-            sesi, isi-minyak, alasan, kuota, peta, audit, ekspor, pengaturan */}
+            alasan, kuota, peta, audit, ekspor, pengaturan */}
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

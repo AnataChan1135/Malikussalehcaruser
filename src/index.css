@@ -37,10 +37,10 @@
     @apply grid min-h-dvh place-items-center px-6 text-center;
   }
   .header {
-    @apply flex items-center justify-between py-2;
+    @apply flex flex-wrap items-center justify-between gap-3 py-2;
   }
   .baris {
-    @apply flex items-center gap-2;
+    @apply flex flex-wrap items-center gap-2;
   }
   .pilihan-minggu {
     @apply flex flex-wrap gap-2;
@@ -161,6 +161,21 @@
   }
   .angka-besar {
     @apply text-3xl font-bold text-slate-900;
+  }
+  .admin-tombol-kecil {
+    @apply h-auto w-auto px-3 py-1.5 text-sm;
+  }
+  .admin-tombol-bahaya {
+    @apply border-danger text-danger;
+  }
+  .admin-foto-pratinjau {
+    @apply mt-1 h-32 w-full rounded-lg object-cover;
+  }
+  .admin-baris-sesi {
+    @apply flex w-full items-center justify-between gap-2 border-0 bg-transparent p-0 text-left;
+  }
+  .admin-detail {
+    @apply mt-2 border-t border-slate-200 pt-3;
   }
 }
 
