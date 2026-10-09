@@ -10,6 +10,8 @@ import Review from './pages/user/Review.jsx'
 import AdminLogin from './pages/admin/AdminLogin.jsx'
 import RuteAdmin from './auth/RuteAdmin.jsx'
 import Ringkasan from './pages/admin/Ringkasan.jsx'
+import Mobil from './pages/admin/Mobil.jsx'
+import Pengguna from './pages/admin/Pengguna.jsx'
 
 export default function App() {
   return (
@@ -28,7 +30,10 @@ export default function App() {
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin" element={<RuteAdmin />}>
         <Route index element={<Ringkasan />} />
-        {/* Halaman admin lain ditambahkan pada tahap berikutnya */}
+        <Route path="mobil" element={<Mobil />} />
+        <Route path="pengguna" element={<Pengguna />} />
+        {/* Halaman admin lain ditambahkan pada tahap berikutnya:
+            sesi, isi-minyak, alasan, kuota, peta, audit, ekspor, pengaturan */}
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />
