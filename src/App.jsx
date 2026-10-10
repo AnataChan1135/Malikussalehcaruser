@@ -14,6 +14,8 @@ import Mobil from './pages/admin/Mobil.jsx'
 import Pengguna from './pages/admin/Pengguna.jsx'
 import SesiMeteran from './pages/admin/SesiMeteran.jsx'
 import IsiMinyakAdmin from './pages/admin/IsiMinyak.jsx'
+import AlasanLaporan from './pages/admin/AlasanLaporan.jsx'
+import Kuota from './pages/admin/Kuota.jsx'
 
 export default function App() {
   return (
@@ -36,8 +38,10 @@ export default function App() {
         <Route path="pengguna" element={<Pengguna />} />
         <Route path="sesi" element={<SesiMeteran />} />
         <Route path="isi-minyak" element={<IsiMinyakAdmin />} />
+        <Route path="alasan" element={<AlasanLaporan />} />
+        <Route path="kuota" element={<Kuota />} />
         {/* Halaman admin lain ditambahkan pada tahap berikutnya:
-            alasan, kuota, peta, audit, ekspor, pengaturan */}
+            peta, audit, ekspor, pengaturan */}
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

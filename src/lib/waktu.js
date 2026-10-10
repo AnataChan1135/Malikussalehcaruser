@@ -60,3 +60,11 @@ export function mingguIniWIB() {
   senin.setUTCDate(senin.getUTCDate() - (indeksHari - 1))
   return senin.toISOString().slice(0, 10)
 }
+
+// Menambah (atau mengurangi, dengan n negatif) sejumlah hari dari sebuah
+// tanggal YYYY-MM-DD. Dipakai untuk navigasi minggu di halaman Kuota.
+export function tambahHari(tanggalISO, n) {
+  const d = new Date(`${tanggalISO}T00:00:00Z`)
+  d.setUTCDate(d.getUTCDate() + n)
+  return d.toISOString().slice(0, 10)
+}
