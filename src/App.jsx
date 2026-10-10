@@ -16,6 +16,8 @@ import SesiMeteran from './pages/admin/SesiMeteran.jsx'
 import IsiMinyakAdmin from './pages/admin/IsiMinyak.jsx'
 import AlasanLaporan from './pages/admin/AlasanLaporan.jsx'
 import Kuota from './pages/admin/Kuota.jsx'
+import PetaLokasi from './pages/admin/PetaLokasi.jsx'
+import AuditLog from './pages/admin/AuditLog.jsx'
 
 export default function App() {
   return (
@@ -40,8 +42,10 @@ export default function App() {
         <Route path="isi-minyak" element={<IsiMinyakAdmin />} />
         <Route path="alasan" element={<AlasanLaporan />} />
         <Route path="kuota" element={<Kuota />} />
+        <Route path="peta" element={<PetaLokasi />} />
+        <Route path="audit" element={<AuditLog />} />
         {/* Halaman admin lain ditambahkan pada tahap berikutnya:
-            peta, audit, ekspor, pengaturan */}
+            ekspor, pengaturan */}
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

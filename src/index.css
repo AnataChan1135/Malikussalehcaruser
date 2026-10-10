@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
 
 @theme {
   --color-brand: #0b5ea8;
@@ -176,6 +177,12 @@
   }
   .admin-detail {
     @apply mt-2 border-t border-slate-200 pt-3;
+  }
+  .admin-peta {
+    @apply h-80 w-full overflow-hidden rounded-2xl;
+  }
+  .admin-json {
+    @apply overflow-x-auto whitespace-pre-wrap break-words rounded-lg bg-slate-50 p-2 font-mono text-xs text-slate-600;
   }
 }
 
